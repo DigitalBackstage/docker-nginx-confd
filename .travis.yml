@@ -1,0 +1,17 @@
+branches:
+  only:
+    - master
+
+language: bash
+services: docker
+
+script:
+  - docker build --tag="digitalbackstage/nginx-confd:alpine" .
+  - >
+    docker run --volume=$PWD/etc:/etc/confd --rm
+    --env NGINX_SERVERNAME=mysite.com
+    --env NGINX_DOCUMENTROOT=/srv/web
+    digitalbackstage/nginx-confd:alpine nginx -t
+
+after_script:
+  - docker images
